@@ -1,3 +1,4 @@
+import { APIUrls } from '../helpers/urls';
 import {UPDATE_POSTS} from './actionTypes';
 
 export function fetchPosts() {
@@ -5,7 +6,8 @@ export function fetchPosts() {
     return (dispatch) => {
         // Here limit 5 means 5 posts
         // const url = 'http://codeial.com:8000/api/v2/posts?page=1&limit=5';
-        const url = 'https://jsonplaceholder.typicode.com/posts?_limit=5';
+        // const url = 'https://jsonplaceholder.typicode.com/posts?_limit=4';
+        const url  = APIUrls.fetchPosts(5);
         fetch(url).then((response)=>{
             console.log('response ', response);
             return response.json();
