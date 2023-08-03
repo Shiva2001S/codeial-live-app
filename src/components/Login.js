@@ -1,65 +1,96 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
+import {Navigate} from 'react-router-dom';
 
-export default class Login extends Component {
-    constructor(props){
-        super(props);
-        // this.emailInputRef = React.createRef();
-        // this.passwordInputRefInputRef = React.createRef();
+import { clearAuthState, login } from '../actions/auth';
 
-        this.state = {
-          email : '',
-          password : '',
-        }
-    }
+class Login extends Component {
+  constructor(props) {
+    super(props);
+    // this.emailInputRef = React.createRef();
+    // this.passwordInputRefInputRef = React.createRef();
 
-    handleEmailChange = (e) => {
-      console.log(e.target.value);
-      this.setState({
-        email : e.target.value
-      });
-    }
-    
-    handlePasswordChange = (e) => {
-      console.log(e.target.value);
-      this.setState({
-        password : e.target.value
-      });
-    }
+    this.state = {
+      email: '',
+      password: '',
+    };
+  }
 
-    handleFormSubmit = (e)=>{
-        e.preventDefault();
-        console.log(this.state);
-        // console.log('this.emailInputRef ', this.emailInputRef);
-        // console.log('this.passwordInputRef ', this.passwordInputRefInputRef);
+  componentWillUnmount = () => {
+    this.props.dispatch(clearAuthState());
+  }
+  
+
+  handleEmailChange = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      email: e.target.value
+    });
+  }
+
+  handlePasswordChange = (e) => {
+    console.log(e.target.value);
+    this.setState({
+      password: e.target.value
+    });
+  }
+
+  handleFormSubmit = (e) => {
+    // console.log('this.emailInputRef ', this.emailInputRef);
+    // console.log('this.passwordInputRef ', this.passwordInputRefInputRef);
+    e.preventDefault();
+    console.log(this.state);
+    const { email, password } = this.state;
+    if (email && password) {
+      this.props.dispatch(login(email, password));
     }
+  };
   render() {
+    const { error, inProgress, isLoggedin } = this.props.auth;
+    // If the user is already logged in then we are simply redirecting him to home page
+    if(isLoggedin){
+      return <Navigate to='/' />
+    }
     return (
       <form className='login-form'>
         <span className='login-signup-header'>Log In</span>
+        {error && <div className='alert error-dailog'>{error}</div>}
         <div className='field'>
-            <input 
-            type='email' 
-            placeholder='Email' 
-            required 
+          <input
+            type='email'
+            placeholder='Email'
+            required
             // ref={this.emailInputRef} 
             onChange={this.handleEmailChange}
             value={this.state.email}
-            />
+          />
         </div>
         <div className='field'>
-            <input 
-            type='password' 
-            placeholder='Password' 
-            required 
+          <input
+            type='password'
+            placeholder='Password'
+            required
             // ref={this.passwordInputRef} 
             onChange={this.handlePasswordChange}
             value={this.state.password}
-            />
+          />
         </div>
         <div className='field'>
-            <button onClick={this.handleFormSubmit}>Log In</button>
+          {/* if inProgress is true then button will be disabled */}
+          {inProgress ? 
+              (<button onClick={this.handleFormSubmit} disabled={inProgress}>Log in...</button>) :
+              (<button onClick={this.handleFormSubmit} disabled={inProgress}>Log In</button>)
+          }
         </div>
       </form>
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    auth: state.auth,
+  };
+}
+
+export default connect(mapStateToProps)(Login);
