@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Link, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Routes, Route, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 
 import { fetchPosts } from '../actions/posts'
@@ -12,6 +12,8 @@ import Page404 from './Page404';
 import Login from './Login';
 import Signup from './Signup';
 import { authenticateUser } from '../actions/auth';
+import Settings from "./Setting";
+import UserProfile from './UserProfile';
 
 // const Login = () => {
 //   return <div>Login</div>
@@ -25,12 +27,19 @@ import { authenticateUser } from '../actions/auth';
 //   return <div>Signup</div>
 // };
 
-const Settings = () => <div>Settings</div>;
+// const Settings = () => <div>Settings</div>;
 
 // This is how we create private route
-const PrivateRoute = ({isLoggedin, children}) => {
+const PrivateRoute = ({ isLoggedin, children }) => {
   // Here children is the component we have wrapped in PrivateRoute
-  return isLoggedin ? children : <Navigate to={'/login'} />
+  const location = useLocation();
+  console.log('location ', location);
+  const navigate = useNavigate();
+  return isLoggedin ? children : navigate('/login', {
+    state : {
+      location : location.pathname
+    }
+  });
 
 };
 
@@ -89,7 +98,7 @@ class App extends React.Component {
               return <Home posts={posts} />
             }} /> */}
           <Route exact={true} path='/' element={<Home obj={this.props} posts={posts} />} />
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<Login  />} />
           <Route path='/signup' element={<Signup />} />
           {/* This is how we create private route */}
           {/* <Route element={<PrivateRoute isLoggedin={auth.isLoggedin} />} >
@@ -97,8 +106,16 @@ class App extends React.Component {
              </Route> */}
           <Route
             path='/setting'
-            element={<PrivateRoute isLoggedin={auth.isLoggedin}>
+            element={<PrivateRoute isLoggedin={auth.isLoggedin} >
               <Settings {...this.props} />
+            </PrivateRoute>}
+          />
+          <Route
+          // This is how we pass params in react
+          // After /user whatever is passed is stored in userId variable
+            path='/user/:userId'
+            element={<PrivateRoute isLoggedin={auth.isLoggedin} >
+              <UserProfile {...this.props} />
             </PrivateRoute>}
           />
           {/* When no route is matched or some other route which is not defined if someone tries to go there then it will render to this */}

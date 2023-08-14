@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 class PostsList extends React.Component {
   render() {
@@ -10,10 +11,12 @@ class PostsList extends React.Component {
           <div className="post-wrapper" >
             <div className="post-header">
               <div className="post-avatar">
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMIV9U3YBjg2f0zAnAqK1SKBJpPq-iSMWRPmWKgI-ceA&s"
-                  alt="user-pic"
-                />
+                <Link to={`/user/${post.userId}`}>
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMIV9U3YBjg2f0zAnAqK1SKBJpPq-iSMWRPmWKgI-ceA&s"
+                    alt="user-pic"
+                  />
+                </Link>
                 <div>
                   <span className="post-author">{post.name}</span>
                   <span className="post-time">a minute ago</span>
@@ -64,7 +67,7 @@ class PostsList extends React.Component {
 // It helps us to remind us to import the prop in the form ie. array , string as we needed
 PostsList.propTypes = {
   // Here we defining the prop name , its type and that it is required
-  posts : PropTypes.array.isRequired
+  posts: PropTypes.array.isRequired
 };
 
 export default PostsList;

@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import {Navigate} from 'react-router-dom';
+import {Navigate, useLocation } from 'react-router-dom';
 
 import { clearAuthState, login } from '../actions/auth';
-
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -45,11 +44,16 @@ class Login extends Component {
       this.props.dispatch(login(email, password));
     }
   };
+
   render() {
     const { error, inProgress, isLoggedin } = this.props.auth;
+    const {location} = this.props;
+    // const location = locationfinder();
+    console.log('myprops ', this.props.location);
+    const {from} = (location && location.state) || {from : {pathname : '/'}};
     // If the user is already logged in then we are simply redirecting him to home page
     if(isLoggedin){
-      return <Navigate to='/' />
+      return <Navigate to={from} />
     }
     return (
       <form className='login-form'>
