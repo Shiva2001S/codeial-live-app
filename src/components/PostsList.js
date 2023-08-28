@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import CreatePost from './CreatePost';
 
 class PostsList extends React.Component {
   render() {
     const { posts } = this.props;
     return (
       <div className="posts-list">
+        <CreatePost />
         {posts.map((post) => (
-          <div className="post-wrapper" >
+          <div className="post-wrapper" key={post.userId}>
             <div className="post-header">
               <div className="post-avatar">
                 <Link to={`/user/${post.userId}`}>

@@ -21,14 +21,14 @@ class Login extends Component {
   
 
   handleEmailChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({
       email: e.target.value
     });
   }
 
   handlePasswordChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({
       password: e.target.value
     });
@@ -38,7 +38,7 @@ class Login extends Component {
     // console.log('this.emailInputRef ', this.emailInputRef);
     // console.log('this.passwordInputRef ', this.passwordInputRefInputRef);
     e.preventDefault();
-    console.log(this.state);
+    // console.log(this.state);
     const { email, password } = this.state;
     if (email && password) {
       this.props.dispatch(login(email, password));
@@ -49,7 +49,8 @@ class Login extends Component {
     const { error, inProgress, isLoggedin } = this.props.auth;
     const {location} = this.props;
     // const location = locationfinder();
-    console.log('myprops ', this.props.location);
+    // console.log('myprops ', this.props.location);
+    console.log('Login Props ', this.props);
     const {from} = (location && location.state) || {from : {pathname : '/'}};
     // If the user is already logged in then we are simply redirecting him to home page
     if(isLoggedin){

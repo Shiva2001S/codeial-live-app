@@ -14,6 +14,7 @@ import Signup from './Signup';
 import { authenticateUser } from '../actions/auth';
 import Settings from "./Setting";
 import UserProfile from './UserProfile';
+import { fetchUserFriends } from '../actions/friends';
 
 // const Login = () => {
 //   return <div>Login</div>
@@ -33,7 +34,7 @@ import UserProfile from './UserProfile';
 const PrivateRoute = ({ isLoggedin, children }) => {
   // Here children is the component we have wrapped in PrivateRoute
   const location = useLocation();
-  console.log('location ', location);
+  // console.log('location ', location);
   const navigate = useNavigate();
   return isLoggedin ? children : navigate('/login', {
     state : {
@@ -58,9 +59,11 @@ class App extends React.Component {
         // In this we are storing the user in store 
         this.props.dispatch(authenticateUser({
           email: user.email,
-          _id: user.iat,
+          userId: user.userId,
           name: user.name,
         }));
+
+        this.props.dispatch(fetchUserFriends(user.userId));
       } catch (error) {
         console.log('Invalid token:', error.message);
       }
@@ -68,8 +71,8 @@ class App extends React.Component {
   }
 
   render() {
-    console.log('props ', this.props);
-    const { posts, auth } = this.props;
+    console.log('App props ', this.props);
+    const { posts, auth, friends } = this.props;
     return (
       // To do routing we enclose it in this
       <Router>
@@ -97,7 +100,7 @@ class App extends React.Component {
           {/* <Route exact={true} path='/' render={()=>{
               return <Home posts={posts} />
             }} /> */}
-          <Route exact={true} path='/' element={<Home obj={this.props} posts={posts} />} />
+          <Route exact={true} path='/' element={<Home obj={this.props} posts={posts} friends={friends} isLoggedin={auth.isLoggedin} />} />
           <Route path='/login' element={<Login  />} />
           <Route path='/signup' element={<Signup />} />
           {/* This is how we create private route */}
