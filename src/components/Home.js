@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PostsList from './PostsList';
 import FriendsList from './FriendsList';
 import { connect } from 'react-redux';
+import Chat from './Chat';
 class Home extends Component {
   render() {
     // console.log("Home ",this.props)
@@ -11,6 +12,7 @@ class Home extends Component {
       <div>
         <PostsList posts={posts} />
         {isLoggedin && <FriendsList friends={friends} />}
+        {isLoggedin && <Chat />}
       </div>
     )
   }

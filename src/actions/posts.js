@@ -1,6 +1,6 @@
 import { APIUrls } from '../helpers/urls';
-import { ADD_POST, UPDATE_POSTS } from './actionTypes';
-import {getAuthTokenFromLocalStorage, getFormBody} from '../helpers/utils';
+import { ADD_POST, UPDATE_POSTS, ADD_COMMENT, UPDATE_POST_LIKE } from './actionTypes';
+import { getAuthTokenFromLocalStorage, getFormBody } from '../helpers/utils';
 
 export function fetchPosts() {
     // this fn of return is handled by thunk middleware
@@ -20,7 +20,7 @@ export function fetchPosts() {
         // });
         fetch(url).then((data) => {
             console.log('response ', data);
-            data.json().then((mydata)=>{
+            data.json().then((mydata) => {
                 console.log(mydata);
                 dispatch(updatePosts(mydata));
             })
@@ -39,7 +39,7 @@ export function updatePosts(posts) {
 
 export function addPost(post) {
     return {
-        type : ADD_POST,
+        type: ADD_POST,
         post,
     };
 }
@@ -49,20 +49,75 @@ export function createPost(content) {
         const url = APIUrls.createPost();
 
         fetch(url, {
-            method : "POST",
+            method: "POST",
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization' : `Bearer ${getAuthTokenFromLocalStorage()}`
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${getAuthTokenFromLocalStorage()}`
             },
-            body : getFormBody({content}),
+            body: getFormBody({ content }),
         }).then((response) => response.json())
-        .then((data) => {
-            console.log("Data ", data);
+            .then((data) => {
+                console.log("Data ", data);
 
-            if(data.success){
-                dispatch(addPost(data.data.post));
-            }
-        });
+                if (data.success) {
+                    dispatch(addPost(data.data.post));
+                }
+            });
+    }
+}
+export function createComment(content, postId) {
+    return (dispatch) => {
+        const url = APIUrls.createComment();
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
+            },
+            body: getFormBody({ content, post_id: postId }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    dispatch(addComment(data.data.comment, postId));
+                }
+            });
+    };
+}
+
+export function addComment(comment, postId) {
+    return {
+        type: ADD_COMMENT,
+        comment,
+        postId,
+    };
+}
+
+export function addLike (id, likeType, userId){
+    return (dispatch) =>{
+        const url = APIUrls.toggleLike(id, likeType);
+
+        fetch(url, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization: `Bearer ${getAuthTokenFromLocalStorage()}`,
+            },
+        })
+        .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    dispatch(addLikeToStore(id, userId));
+                }
+            });
+    }
+}
+
+export function addLikeToStore(postId, userId){
+    return {
+        type : UPDATE_POST_LIKE,
+        postId, 
+        userId
     }
 }
 
